@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Background Check - Charity Pulse{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-dark text-white">
+                <div class="card-header bg-primary">
+                    <h3 class="mb-0">Financial Background Verification</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text mb-4">
+                        This verification helps us understand your financial situation to better match you with 
+                        appropriate charity opportunities.
+                    </p>
+                    
+                    <form method="POST" action="/submit_background_check">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Address</label>
+                                <input type="text" name="address" class="form-control bg-darker text-black" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Contact Number</label>
+                                <input type="tel" name="contact" class="form-control bg-darker text-black" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Employment Status</label>
+                                <select name="employment_status" class="form-select bg-darker text-black" required>
+                                    <option value="">Select...</option>
+                                    <option value="employed">Employed</option>
+                                    <option value="self-employed">Self-Employed</option>
+                                    <option value="unemployed">Unemployed</option>
+                                    <option value="retired">Retired</option>
+                                    <option value="student">Student</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Income Range</label>
+                                <select name="income_range" class="form-select bg-darker text-black" required>
+                                    <option value="">Select...</option>
+                                    <option value="<30k">Under $30k</option>
+                                    <option value="30k-60k">$30k - $60k</option>
+                                    <option value="60k-80k">$60k - $80k</option>
+                                    <option value="80k-100k">$80k - $100k</option>
+                                    <option value=">100k">Over $100k</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Housing Type</label>
+                                <select name="housing_type" class="form-select bg-darker text-black" required>
+                                    <option value="">Select...</option>
+                                    <option value="own">Own</option>
+                                    <option value="rent">Rent</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gross Income Last Year ($)</label>
+                                <input type="number" name="gross_income" class="form-control bg-darker text-black" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Stock Investments ($)</label>
+                                <input type="number" name="stocks" class="form-control bg-darker text-black" value="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Crypto Investments ($)</label>
+                                <input type="number" name="crypto" class="form-control bg-darker text-black" value="0">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Reference Contact</label>
+                            <input type="text" name="reference" class="form-control bg-darker text-black" required>
+                            <small class="text-muted">Someone we can contact to verify your information</small>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="consent" required>
+                            <label class="form-check-label" for="consent">
+                                I authorize Charity Pulse to verify this information
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100 py-2">
+                            Submit for Verification
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

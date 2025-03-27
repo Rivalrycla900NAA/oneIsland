@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Charity Pulse{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg" style="width: 24rem; background-color: #3d3c3c; border: 1px solid #333;">
+        <div class="card-body p-4">
+            <div class="text-center mb-4">
+                <h2 class="text-white">Welcome Back</h2>
+                <p class="text-light opacity-75">Sign in to continue</p>
+            </div>
+            
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="email" class="form-label text-white">Email</label>
+                    <input type="email" class="form-control bg-dark text-white border-dark" 
+                           id="email" name="email" required placeholder="your@email.com">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="password" class="form-label text-white">Password</label>
+                    <input type="password" class="form-control bg-dark text-white border-dark" 
+                           id="password" name="password" required placeholder="••••••••">
+                </div>
+                
+                <button type="submit" class="btn btn-success w-100 py-2 mb-3">
+                    Sign In
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-light opacity-75">Don't have an account? 
+                        <a href="/signup" class="text-success text-decoration-none">Sign up</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
