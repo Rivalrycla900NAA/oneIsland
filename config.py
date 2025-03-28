@@ -2,10 +2,10 @@ import os
 
 class Config:
     # Basic MySQL configuration (matches what works in MySQL Workbench)
-    MYSQL_HOST = 'donateplus.mysql.database.azure.com'
-    MYSQL_USER = 'ravalry'
-    MYSQL_PASSWORD = 'god1mode$'
-    MYSQL_DB = 'charity_pulse'
+    MYSQL_HOST = '.'
+    MYSQL_USER = ''
+    MYSQL_PASSWORD = '$'
+    MYSQL_DB = ''
     
     # SSL configuration (simplified approach)
     MYSQL_SSL_MODE = 'REQUIRED'  # Enables SSL without certificate files
