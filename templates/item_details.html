@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }} - Charity Pulse{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card bg-dark text-white">
+                <img src="{{ url_for('static', filename=item.image_path) }}" 
+                     class="card-img-top" 
+                     alt="{{ item.title }}">
+                <div class="card-body">
+                    <h3 class="card-title">{{ item.title }}</h3>
+                    <p class="card-text"><strong>Description:</strong> {{ item.description }}</p>
+                    <p><i class="bi bi-geo-alt"></i> <strong>Location:</strong> {{ item.location }}</p>
+                    <p><strong>Posted by:</strong> 
+                        <a href="{{ url_for('user_profile', user_id=item.user_id) }}" class="text-success">
+                            {{ item.owner_first_name }} {{ item.owner_last_name }}  <!-- This will show the user_id, consider adding owner's name instead -->
+                        </a>
+                    </p>
+                    <p><strong>Status:</strong> 
+                        <span class="badge bg-{{ 'success' if item.status == 'available' else 'warning' }}">
+                            {{ item.status|capitalize }}
+                        </span>
+                    </p>
+
+                    {% if current_user_id == item.user_id %}
+                        <form action="{{ url_for('update_item_status', item_id=item.id) }}" method="post">
+                            <label for="status">Change Status:</label>
+                            <select name="status" class="form-select">
+                                <option value="available" {% if item.status == 'available' %}selected{% endif %}>Available</option>
+                                <option value="claimed" {% if item.status == 'claimed' %}selected{% endif %}>Claimed</option>
+                                <option value="completed" {% if item.status == 'completed' %}selected{% endif %}>Completed</option>
+                            </select>
+                            <button type="submit" class="btn btn-success mt-2">Update</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="card bg-dark text-white mt-4">
+                <div class="card-header bg-success">
+                    <h5>Comments</h5>
+                </div>
+                <div class="card-body">
+                    {% for comment in comments %}
+                        <div class="mb-3 p-2 bg-secondary rounded">
+                            <strong>{{ comment[2] }} {{ comment[3] }}</strong> <small class="text-muted">({{ comment[1] }})</small>
+                            <p class="mb-0">{{ comment[0] }}</p>
+                        </div>
+                    {% endfor %}
+
+                    <!-- Leave a comment -->
+                    {% if current_user_id %}
+                        <form action="{{ url_for('add_comment', item_id=item.id) }}" method="post">
+                            <textarea name="content" class="form-control" placeholder="Write a comment..." required></textarea>
+                            <button type="submit" class="btn btn-success mt-2">Comment</button>
+                        </form>
+                    {% else %}
+                        <p class="text-muted">Log in to leave a comment.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

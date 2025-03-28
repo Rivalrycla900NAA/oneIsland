@@ -15,31 +15,34 @@
             {% for donation in donations %}
             <div class="col">
                 <div class="card h-100 bg-dark text-white">
-                    <img src="{{ url_for('static', filename=donation[3]) }}" 
-                         class="card-img-top" 
-                         style="height: 200px; object-fit: cover;"
-                         alt="{{ donation[1] }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ donation[1] }}</h5>
-                        <p class="card-text text-muted">
-                            <small>
-                                Posted by <a href="{{ url_for('profile', user_id=donation[8]) }}">{{ donation[6] }} {{ donation[7] }}</a> • 
-                                {{ donation[5].strftime('%b %d, %Y') }}
-                            </small>
-                        </p>
-                        <p class="card-text">{{ donation[2] }}</p>
-                        <p class="card-text">
-                            <strong>Status:</strong> {{ donation[9] }} <!-- Display status here -->
-                        </p>
-                    </div>
+                    <!-- Clicking the image or title takes the user to item_details -->
+                    <a href="{{ url_for('item_details', item_id=donation[0]) }}" class="text-decoration-none text-white">
+                        <img src="{{ url_for('static', filename=donation[3]) }}" 
+                             class="card-img-top" 
+                             style="height: 200px; object-fit: cover;"
+                             alt="{{ donation[1] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ donation[1] }}</h5>
+                            <p class="card-text text-muted">
+                                <small>
+                                    Posted by <a href="{{ url_for('user_profile', user_id=donation[8]) }}" class="text-success">{{ donation[6] }} {{ donation[7] }}</a> • 
+                                    {{ donation[5].strftime('%b %d, %Y') }}
+                                </small>
+                            </p>                        
+                            <p class="card-text">{{ donation[2] }}</p>
+                            <p class="card-text">
+                                <strong>Status:</strong> {{ donation[9] }}
+                            </p>
+                        </div>
+                    </a>
                     <div class="card-footer bg-success">
                         <div class="d-flex justify-content-between align-items-center">
                             <span>
                                 <i class="bi bi-geo-alt"></i> {{ donation[4] }}
                             </span>
-                            <button class="btn btn-sm btn-light">
-                                <i class="bi bi-hand-thumbs-up"></i> Claim
-                            </button>
+                            <a href="{{ url_for('item_details', item_id=donation[0]) }}" class="btn btn-sm btn-light">
+                                <i class="bi bi-eye"></i> View
+                            </a>
                         </div>
                     </div>
                 </div>

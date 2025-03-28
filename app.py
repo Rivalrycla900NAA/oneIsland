@@ -361,6 +361,18 @@ def create_tables():
             """)
             
             cur.execute("""
+                CREATE TABLE IF NOT EXISTS comments (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    item_id INT NOT NULL,
+                    user_id INT NOT NULL,
+                    content TEXT NOT NULL,
+                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (item_id) REFERENCES item_donations(id),
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                )
+            """)
+                        
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS user_badges (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     user_id INT,
@@ -369,6 +381,7 @@ def create_tables():
                     FOREIGN KEY (user_id) REFERENCES users(id)
                 )
             """)
+            
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS item_donations (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -481,7 +494,171 @@ def marketplace():
             cur.close()
 
 
+
 #=====================================================================
+@app.route('/item/<int:item_id>', methods=['GET'])
+def item_details(item_id):
+    try:
+        # Check if user_id is in the session
+        if 'user_id' not in session:
+            return redirect(url_for('signin'))  # Redirect to signin if not logged in
+
+        # Fetch item details from the database
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            SELECT d.id AS item_id, d.user_id, d.title, d.description, d.image_path, 
+                   d.location, d.created_at, d.status,
+                   u.first_name, u.last_name
+            FROM item_donations d
+            JOIN users u ON d.user_id = u.id
+            WHERE d.id = %s
+        """, (item_id,))
+        item = cur.fetchone()
+
+        if not item:
+            flash("Item not found!", "error")
+            return redirect(url_for('marketplace'))
+
+        # Create a dictionary from the tuple for easier access
+        item_dict = {
+            'id': item[0],  # item_id
+            'user_id': item[1],
+            'title': item[2],
+            'description': item[3],
+            'image_path': item[4],
+            'location': item[5],
+            'created_at': item[6],
+            'status': item[7],
+            'owner_first_name': item[8],
+            'owner_last_name': item[9]
+        }
+
+        # Fetch comments for the item
+        cur.execute("SELECT c.content, c.timestamp, u.first_name, u.last_name "
+                    "FROM comments c JOIN users u ON c.user_id = u.id WHERE c.item_id = %s", (item_id,))
+        comments = cur.fetchall()
+
+        # Get the current user's ID from the session
+        current_user_id = session['user_id']
+
+        cur.close()
+        
+        # Pass the item_dict to the template
+        return render_template('item_details.html', 
+                               item=item_dict, 
+                               comments=comments, 
+                               current_user_id=current_user_id)
+
+    except Exception as e:
+        print(f"ERROR: {e}")
+        flash("An error occurred while loading item details.", "error")
+        return redirect(url_for('marketplace'))
+
+
+
+
+@app.route('/item/<int:item_id>/comment', methods=['POST'])
+def add_comment(item_id):
+    # Check if user_id is in the session
+    if 'user_id' not in session:
+        flash("You need to be logged in to leave a comment.", "error")
+        return redirect(url_for('signin'))
+
+    content = request.form.get('content')
+    user_id = session['user_id']
+
+    # Save to DB
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO comments (user_id, item_id, content) VALUES (%s, %s, %s)", (user_id, item_id, content))
+        mysql.connection.commit()
+        cur.close()
+        flash("Comment added successfully!", "success")
+    except Exception as e:
+        print(f"ERROR: {e}")
+        flash("An error occurred while adding your comment.", "error")
+
+    return redirect(url_for('item_details', item_id=item_id))
+
+
+
+@app.route('/user/<int:user_id>')
+def user_profile(user_id):
+    try:
+        cur = mysql.connection.cursor()
+
+        # Fetch user details
+        cur.execute("SELECT first_name, last_name, email, created_at FROM users WHERE id = %s", (user_id,))
+        user_data = cur.fetchone()
+
+        if not user_data:
+            flash("User not found!", "error")
+            return redirect(url_for('home'))
+
+        # Fetch profile details
+        cur.execute("""
+            SELECT profile_picture, bio, city, country, is_verified 
+            FROM user_profiles 
+            WHERE user_id = %s
+        """, (user_id,))
+        profile_data = cur.fetchone()
+
+        profile_dict = {
+            'profile_picture': profile_data[0] if profile_data else None,
+            'bio': profile_data[1] if profile_data else "No bio available",
+            'city': profile_data[2] if profile_data else "Unknown",
+            'country': profile_data[3] if profile_data else "Unknown",
+            'is_verified': bool(profile_data[4]) if profile_data else False
+        }
+
+        # Fetch donation stats
+        cur.execute("SELECT COALESCE(SUM(amount), 0) FROM donations WHERE user_id = %s", (user_id,))
+        donations_total = float(cur.fetchone()[0])
+
+        # Fetch active listings
+        cur.execute("SELECT id, title, image_path, status FROM item_donations WHERE user_id = %s;", (user_id,))
+        active_listings = cur.fetchall()
+
+        # Fetch total donations count
+        cur.execute("SELECT COUNT(*) FROM item_donations WHERE user_id = %s", (user_id,))
+        donations_count = cur.fetchone()[0]
+
+        # Background check status
+        background_check_status = None
+        background_check_score = None
+        try:
+            cur.execute("SELECT status, score FROM background_checks WHERE user_id = %s", (user_id,))
+            bg_check = cur.fetchone()
+            if bg_check:
+                background_check_status, background_check_score = bg_check
+        except:
+            pass  # Ignore if no background check data
+
+        cur.close()
+
+        return render_template('user_profile.html',
+            user={
+                'first_name': user_data[0],
+                'last_name': user_data[1],
+                'email': user_data[2],
+                'created_at': user_data[3]
+            },
+            user_profile=profile_dict,
+            donations_total=donations_total,
+            followers_count=0,  # Placeholder for now
+            following_count=0,  # Placeholder for now
+            active_listings=active_listings,
+            donations_count=donations_count,
+            background_check_status=background_check_status,
+            background_check_score=background_check_score
+        )
+
+    except Exception as e:
+        print(f"ERROR: {e}")
+        flash("An error occurred while loading the profile.", "error")
+        return redirect(url_for('home'))
+
+
 
 @app.route('/profile')
 def profile():
@@ -604,6 +781,25 @@ def profile():
         if cur:
             cur.close()
 
+@app.route('/item/<int:item_id>/update_status', methods=['POST'])
+def update_item_status(item_id):
+    if 'user_id' not in session:
+        flash("You need to be logged in to update the status.", "error")
+        return redirect(url_for('signin'))
+
+    new_status = request.form.get('status')
+
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE item_donations SET status = %s WHERE id = %s", (new_status, item_id))
+        mysql.connection.commit()
+        cur.close()
+        flash("Item status updated successfully!", "success")
+    except Exception as e:
+        print(f"ERROR: {e}")
+        flash("An error occurred while updating the item status.", "error")
+
+    return redirect(url_for('item_details', item_id=item_id))
 
 #=================================================================================================
 @app.route('/update_bio', methods=['POST'])

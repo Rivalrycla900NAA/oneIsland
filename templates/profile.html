@@ -134,46 +134,48 @@
                 </div>
             </div>
 
-            <!-- Active Listings Section -->
-            <div class="card bg-dark text-white mt-4">
-                <div class="card-header bg-success">
-                    <h5 class="mb-0">Your Active Listings</h5>
-                </div>
-                <div class="card-body">
-                   
-                    {% if not active_listings %}
-                        <p class="text-muted">You haven't posted any donations yet.</p>
-                        <a href="/donate" class="btn btn-sm btn-success">Post a Donation</a>
-                    {% else %}
-                        <div class="row row-cols-1 row-cols-md-2 g-2">
-                            {% for donation in active_listings %}
-                            
-                            <div class="col">
-                                
-                                <div class="card bg-darker text-white h-100">
-                                    <!-- donation[2] should be image_path -->
-                                    <img src="{{ url_for('static', filename=donation[3]) }}" 
-                                        class="card-img-top" 
-                                        style="height: 120px; object-fit: cover;"
-                                        alt="{{ donation[1] }}">  <!-- donation[1] should be title -->
-                                    <div class="card-body">
-                                        <h6 class="card-title">{{ donation[1] }}</h6>  <!-- Title -->
-                                        <span class="badge bg-{{ 'success' if donation[4] == 'available' else 'warning' }}">
-                                            {{ donation[4]|capitalize }}  <!-- Status -->
-                                        </span>
-                                    </div>
-                                </div>
+<!-- Active Listings Section -->
+<div class="card bg-dark text-white mt-4">
+    <div class="card-header bg-success">
+        <h5 class="mb-0">Your Active Listings</h5>
+    </div>
+    <div class="card-body">
+       
+        {% if not active_listings %}
+            <p class="text-muted">You haven't posted any donations yet.</p>
+            <a href="/donate" class="btn btn-sm btn-success">Post a Donation</a>
+        {% else %}
+            <div class="row row-cols-1 row-cols-md-2 g-2">
+                {% for donation in active_listings %}
+                
+                <div class="col">
+                    <!-- Make the entire card clickable -->
+                    <a href="{{ url_for('item_details', item_id=donation[0]) }}" class="text-decoration-none">
+                        <div class="card bg-darker text-white h-100">
+                            <img src="{{ url_for('static', filename=donation[3]) }}" 
+                                class="card-img-top" 
+                                style="height: 120px; object-fit: cover;"
+                                alt="{{ donation[1] }}">  <!-- donation[1] should be title -->
+                            <div class="card-body">
+                                <h6 class="card-title">{{ donation[1] }}</h6>  <!-- Title -->
+                                <span class="badge bg-{{ 'success' if donation[4] == 'available' else 'warning' }}">
+                                    {{ donation[4]|capitalize }}  <!-- Status -->
+                                </span>
                             </div>
-                            {% endfor %}
                         </div>
-                        <div class="mt-3 text-end">
-                            <a href="/marketplace?my_items=1" class="btn btn-sm btn-outline-light">
-                                View All Your Listings
-                            </a>
-                        </div>
-                    {% endif %}
+                    </a>
                 </div>
+                {% endfor %}
             </div>
+            <div class="mt-3 text-end">
+                <a href="/marketplace?my_items=1" class="btn btn-sm btn-outline-light">
+                    View All Your Listings
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
         </div>
 
         <!-- Right Side (Placeholders) -->
@@ -210,7 +212,7 @@
             </div>
             <form id="bioForm" method="POST" action="/update_bio">
                 <div class="modal-body">
-                    <textarea class="form-control bg-darker text-white" name="bio" rows="5">{{ user_profile.bio|default('', true) }}</textarea>
+                    <textarea class="form-control bg-darker text-black" name="bio" rows="5">{{ user_profile.bio|default('', true) }}</textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Save Changes</button>
