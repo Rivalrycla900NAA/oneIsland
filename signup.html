@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Charity Pulse{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg" style="width: 28rem; background-color: #3d3c3c; border: 1px solid #333;">
+        <div class="card-body p-4">
+            <div class="text-center mb-4">
+                <h2 class="text-white">Create Account</h2>
+                <p class="text-light opacity-75">Join Charity Pulse today</p>
+            </div>
+            
+            <form method="POST">
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="first_name" class="form-label text-white">First Name</label>
+                        <input type="text" class="form-control bg-dark text-white border-dark" 
+                               id="first_name" name="first_name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="last_name" class="form-label text-white">Last Name</label>
+                        <input type="text" class="form-control bg-dark text-white border-dark" 
+                               id="last_name" name="last_name" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label text-white">Email</label>
+                    <input type="email" class="form-control bg-dark text-white border-dark" 
+                           id="email" name="email" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="password" class="form-label text-white">Password</label>
+                    <input type="password" class="form-control bg-dark text-white border-dark" 
+                           id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-success w-100 py-2 mb-3">
+                    Sign Up
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-light opacity-75">Already have an account? 
+                        <a href="/signin" class="text-success text-decoration-none">Sign in</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
