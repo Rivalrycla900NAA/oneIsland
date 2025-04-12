@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Post a Donation - Charity Pulse{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-dark text-white">
+                <div class="card-header bg-success">
+                    <h3 class="mb-0">Post a Donation</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label">Item Title*</label>
+                            <input type="text" name="title" class="form-control bg-dark-form" 
+                                   value="{{ request.form.title }}" required>
+                            <div class="invalid-feedback">Please provide a title</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description*</label>
+                            <textarea name="description" class="form-control bg-dark-form" 
+                                      rows="4" required>{{ request.form.description }}</textarea>
+                            <div class="invalid-feedback">Please provide a description</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Item Photo*</label>
+                            <input type="file" name="photo" class="form-control bg-dark-form" 
+                                   accept="image/*" required>
+                            <small class="text-muted">Max 16MB (JPG, PNG, GIF)</small>
+                            <div class="invalid-feedback">Please upload a photo</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Pickup Location*</label>
+                            <input type="text" name="location" class="form-control bg-dark-form" 
+                                   value="{{ request.form.location }}" required>
+                            <small class="text-muted">Where should recipients pick up this item?</small>
+                            <div class="invalid-feedback">Please provide a location</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100 py-2">
+                            Post Donation
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Client-side form validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        form.classList.add('was-validated');
+    }, false);
+});
+</script>
+{% endblock %}
