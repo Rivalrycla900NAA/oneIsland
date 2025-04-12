@@ -212,7 +212,7 @@
             </div>
             <form id="bioForm" method="POST" action="/update_bio">
                 <div class="modal-body">
-                    <textarea class="form-control bg-darker text-black" name="bio" rows="5">{{ user_profile.bio|default('', true) }}</textarea>
+                    <textarea class="form-control bg-lighter text-black" name="bio" rows="5">{{ user_profile.bio|default('', true) }}</textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Save Changes</button>
@@ -234,12 +234,12 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">City</label>
-                        <input type="text" class="form-control bg-darker text-white" name="city" 
+                        <input type="text" class="form-control bg-lighter text-black" name="city" 
                                value="{{ user_profile.city|default('', true) }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Country</label>
-                        <input type="text" class="form-control bg-darker text-white" name="country" 
+                        <input type="text" class="form-control bg-lighter text-black" name="country" 
                                value="{{ user_profile.country|default('', true) }}">
                     </div>
                 </div>
